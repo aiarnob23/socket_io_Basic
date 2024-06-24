@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSocket } from "../../context/socketProvider/SocketProvider";
+import { useNavigate } from "react-router-dom";
 
 const Lobby = () => {
   const [room, setRoom] = useState("");
 
   const socket = useSocket();
+  const navigate = useNavigate();
 
   //room joining function
   const handleJoinRoom = useCallback(
@@ -15,17 +17,21 @@ const Lobby = () => {
     [socket, room]
   );
 
-  const handleRcvdMsg = async (data) => {
-    console.log(data);
-  };
 
-  //
+
+  const handleNavigateRoom = useCallback((data) => {
+    const { room, socketId } = data;
+    navigate(`room/${room}`);
+  }
+  ,[navigate])
+
+  //useEffects
   useEffect(() => {
-    socket.on("msg", handleRcvdMsg);
+    socket.on("joinRoomNavigate", handleNavigateRoom);
     return () => {
-      socket.off("msg", handleRcvdMsg);
+      socket.off("joinRoomNavigate", handleNavigateRoom);
     };
-  }, [handleRcvdMsg]);
+  }, [handleNavigateRoom]);
 
   //return body
   return (

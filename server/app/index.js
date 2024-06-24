@@ -6,17 +6,27 @@ const io = new Server(4000, {
     cors:true,
 })
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+//socket connection 
 io.on("connection", (socket) => {
-    console.log(socket.id);
+     
+    //join room
+    const socketId = socket.id;
     socket.on("join-room", async (room) => {
-        console.log(room);
         socket.join(room);
-        io.to(room).emit("msg", `welcome to room no ${room}`);
+        io.to(room).emit("joinRoomNavigate", { room, socketId });
+        io.to(room).emit("joinedRoomsDetailsPass", { room, socketId });
     });
+
+    //chat messages
+    socket.on("chat-message", ({room, message}) => {
+        socket.to(room).emit('receiveChatMessage', message);
+     });
+
 })
 
 
