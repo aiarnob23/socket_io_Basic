@@ -3,7 +3,10 @@ const cors = require('cors');
 const { Server } = require("socket.io");
 
 const io = new Server(4000, {
-    cors:true,
+    cors: {
+        origin: "*",
+        methods:["GET", "POST"]
+    }
 })
 
 

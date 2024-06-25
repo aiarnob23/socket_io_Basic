@@ -8,30 +8,24 @@ const Room = () => {
   const [message, setMessage] = useState("");
   const [messageHistory, setMessageHistory] = useState([]);
 
-  //functions
-  const handleRoomDetails = useCallback(
-    async ({ room, socketId }) => {
-      setRoom(room);
-      setSelfSocketId(socketId);
-    },
-    []
-  );
+  const handleRoomDetails = useCallback(async ({ room, socketId }) => {
+    setRoom(room);
+    setSelfSocketId(socketId);
+  }, []);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (message) {
+    if (message.trim()) {
       socket.emit("chat-message", { room, message });
+      setMessageHistory((prevHistory) => [...prevHistory, `You: ${message}`]);
+      setMessage(""); // Clear the message input field after sending
     }
   };
 
-    const handleReceiveMessage = useCallback((message) => {
-      setMessageHistory(messageHistory=>[...messageHistory, message]);
+  const handleReceiveMessage = useCallback((message) => {
+    setMessageHistory((messageHistory) => [...messageHistory, message]);
   }, []);
-    
-    
-    console.log(messageHistory);
 
-  //useEffects
   useEffect(() => {
     socket.on("joinedRoomsDetailsPass", handleRoomDetails);
     socket.on("receiveChatMessage", handleReceiveMessage);
@@ -39,17 +33,17 @@ const Room = () => {
       socket.off("joinedRoomsDetailsPass", handleRoomDetails);
       socket.off("receiveChatMessage", handleReceiveMessage);
     };
-  }, [handleRoomDetails, handleReceiveMessage]);
+  }, [socket, handleRoomDetails, handleReceiveMessage]);
 
-  //return body
   return (
     <div>
       <h4>Room No: {room}</h4>
-      <form onSubmit={handleSendMessage} action="">
+      <form onSubmit={handleSendMessage}>
         <input
           type="text"
           name="message"
           id="message"
+          value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
         <button type="submit">Send</button>

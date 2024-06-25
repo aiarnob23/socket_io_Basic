@@ -8,35 +8,34 @@ const Lobby = () => {
   const socket = useSocket();
   const navigate = useNavigate();
 
-  //room joining function
   const handleJoinRoom = useCallback(
     (e) => {
       e.preventDefault();
-      socket.emit("join-room", room);
+      if (room.trim()) {
+        socket.emit("join-room", room);
+      }
     },
     [socket, room]
   );
 
+  const handleNavigateRoom = useCallback(
+    (data) => {
+      const { room, socketId } = data;
+      navigate(`room/${room}`);
+    },
+    [navigate]
+  );
 
-
-  const handleNavigateRoom = useCallback((data) => {
-    const { room, socketId } = data;
-    navigate(`room/${room}`);
-  }
-  ,[navigate])
-
-  //useEffects
   useEffect(() => {
     socket.on("joinRoomNavigate", handleNavigateRoom);
     return () => {
       socket.off("joinRoomNavigate", handleNavigateRoom);
     };
-  }, [handleNavigateRoom]);
+  }, [socket, handleNavigateRoom]);
 
-  //return body
   return (
     <div>
-      <form onSubmit={handleJoinRoom} action="">
+      <form onSubmit={handleJoinRoom}>
         <input
           type="text"
           className="border-2 rounded-lg mx-2 my-2 px-5"
