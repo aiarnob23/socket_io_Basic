@@ -34,18 +34,24 @@ const Lobby = () => {
   }, [socket, handleNavigateRoom]);
 
   return (
-    <div>
-      <form onSubmit={handleJoinRoom}>
-        <input
-          type="text"
-          className="border-2 rounded-lg mx-2 my-2 px-5"
-          name="room"
-          value={room}
-          id="room"
-          onChange={(e) => setRoom(e.target.value)}
-        />
-        <button type="submit">Join Room</button>
-      </form>
+    <div className="container flex justify-center flex-col items-center h-screen mx-auto">
+      <h2 className="text-5xl text-gray-700 my-5 font-semibold">Welcome to online chat</h2>
+      <div>
+        <form onSubmit={handleJoinRoom}>
+          <input
+            type="text"
+            className="border-4 border-green-300 rounded-lg mx-2 my-2 py-2 px-5"
+            name="room"
+            value={room}
+            placeholder="Enter a room code"
+            id="room"
+            onChange={(e) => setRoom(e.target.value)}
+          />
+          <button className="text-3xl font-semibold text-green-700" type="submit">
+            Join 
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
